@@ -1,0 +1,79 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.2'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id "org.openapi.generator" version '4.2.1'
+	id 'jacoco'
+}
+
+group = 'com.senecaglobal.myshop'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+
+def springFoxVersion = "2.9.2"
+def validationApiVersion = "2.0.1.Final"
+def openApiJacksonVersion = "0.2.1"
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok'
+	compileOnly "io.swagger:swagger-annotations:1.6.1"
+	implementation "io.springfox:springfox-swagger2:${springFoxVersion}"
+	implementation "io.springfox:springfox-swagger-ui:${springFoxVersion}"
+	implementation group: 'javax.validation', name: 'validation-api', version: "${validationApiVersion}"
+	implementation group: 'org.openapitools', name: 'jackson-databind-nullable', version: "${openApiJacksonVersion}"
+	implementation('org.springframework.boot:spring-boot-starter-actuator')
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+task buildScoringApi(type: org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+	systemProperties = [
+			modelDocs      : "false",
+			models         : "",
+			apis           : "",
+			supportingFiles: "false"
+	]
+	apiPackage = "com.senecaglobal.myshop.api"
+	generatorName = "spring"
+	skipOverwrite = false
+	generateApiTests = false
+	generateModelTests = false
+	library = "spring-boot"
+	inputSpec = "$rootDir/src/main/resources/MyShop.yaml".toString()
+	outputDir = "$rootDir/generated".toString()
+	modelPackage = "com.senecaglobal.myshop.models"
+	configOptions = [
+			dateLibrary            : "joda",
+			sourceFolder           : "src/main/java",
+			interfaceOnly          : "true",
+			skipDefaultInterface   : "true",
+			hideGenerationTimestamp: "true",
+			serializableModel      : "true"
+	]
+}
+
+sourceSets.main.java.srcDirs += "$rootDir/generated/src/main/java"
+
+compileJava.dependsOn tasks.buildScoringApi
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
