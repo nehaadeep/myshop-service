@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Build and package
 
 ```
@@ -50,5 +49,87 @@ http://localhost:8090/myshop-service/swagger-ui.html
 
 ```
 http://localhost:8090/myshop-service/actuator/health
->>>>>>> 34e615b59c757344225b7f97d5bc1b66da0bd1ee
 ```
+
+```
+http://localhost:8090/myshop-service/actuator/health
+
+{"status":"UP"}
+
+
+_Example request 1:_ 
+
+curl -X POST "http://localhost:8090/myshop-service/myshop/cart/total" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"products\": [ { \"id\": 1, \"name\": \"T-shirt\", \"price\": 500 }, { \"id\": 1, \"name\": \"T-shirt\", \"price\": 500 }, { \"id\": 4, \"name\": \"Shoes\", \"price\": 5000 }, { \"id\": 3, \"name\": \"Jacket\", \"price\": 2500 } ]}"
+
+_Swagger request payload 1:_ 
+
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "T-shirt",
+      "price": 500
+    },
+    {
+      "id": 1,
+      "name": "T-shirt",
+      "price": 500
+    },
+    {
+      "id": 4,
+      "name": "Shoes",
+      "price": 5000
+    },
+    {
+      "id": 3,
+      "name": "Jacket",
+      "price": 2500
+    }
+  ]
+}
+
+_Example response 1:_
+
+{
+  "subtotal": 8500,
+  "tax": 1530,
+  "total": 8280,
+  "comments": "2 eligible offers",
+  "discounts": [
+    "10% off on shoes: Rs, 500",
+    "50% off on Jacket: Rs, 1250"
+  ]
+}
+
+_Example request 2:_ 
+
+curl -X POST "http://localhost:8090/myshop-service/myshop/cart/total" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"products\": [ { \"id\": 1, \"name\": \"T-shirt\", \"price\": 500 }, { \"id\": 2, \"name\": \"Trousers\", \"price\": 1500 } ]}"
+
+_Swagger request payload 2:_
+
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "T-shirt",
+      "price": 500
+    },
+    {
+      "id": 2,
+      "name": "Trousers",
+      "price": 1500
+    }
+  ]
+}
+
+_Example response 2:_ 
+
+{
+  "subtotal": 2000,
+  "tax": 360,
+  "total": 2360,
+  "comments": "No eligible offers",
+  "discounts": []
+}
+```
+
